@@ -26,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text.trim(),
       );
 
+      if (!mounted) return; // Prevent context error
       Navigator.pushReplacementNamed(context, "/home");
     } on FirebaseAuthException catch (e) {
       String message;
@@ -43,15 +44,19 @@ class _LoginScreenState extends State<LoginScreen> {
           message = 'Login failed. Please try again.';
       }
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
-    } catch (_) {
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Something went wrong. Try again later.')),
       );
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -83,42 +88,46 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 40),
                 TextFormField(
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
-                    filled: true, // Enable background fill
-                    fillColor: Colors.white, // Set background color to white
+                    filled: true,
+                    fillColor: Colors.white,
                     prefixIcon: Icon(Icons.email_outlined),
                     labelText: 'Email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
                   ),
-                  validator: (value) => value == null || !value.contains('@')
+                  validator: (value) =>
+                  value == null || !value.contains('@')
                       ? 'Enter a valid email'
                       : null,
                 ),
-
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
-                    filled: true, // Enable background fill
-                    fillColor: Colors.white, // Set background color to white
+                    filled: true,
+                    fillColor: Colors.white,
                     prefixIcon: Icon(Icons.lock_outline),
                     labelText: 'Password',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
                   ),
-                  validator: (value) => value != null && value.length < 6
+                  validator: (value) =>
+                  value != null && value.length < 6
                       ? 'Password must be at least 6 characters'
                       : null,
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {}, // TODO: Add forgot password
-                    child: const Text("Forgot password?"),
+                    onPressed: () {
+                      // TODO: Add Forgot Password logic here
+                    },
+                    child: const Text("Forgot password?",style: TextStyle(color: Colors.black87)),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -128,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: _isLoading ? null : _signIn,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.black87,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -143,21 +152,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         : const Text("Log In"),
                   ),
                 ),
-
                 const SizedBox(height: 20),
                 Row(
                   children: const [
                     Expanded(child: Divider()),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text("Or"),
+                      child: Text("Or",style: TextStyle(
+                        fontWeight: FontWeight.bold
+                      )),
                     ),
                     Expanded(child: Divider()),
                   ],
                 ),
                 const SizedBox(height: 20),
-
-                // Google Sign-In Button (flutter_signin_button)
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -169,7 +177,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     text: "Sign in with Google",
                     padding: const EdgeInsets.all(8),
                     onPressed: () {
-                      // TODO: Implement actual Google Sign-In logic here
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text("Google Sign-In coming soon")),
@@ -177,7 +184,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                 ),
-
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -189,11 +195,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: const Text(
                         "Sign up",
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: Colors.black87,
+                        fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),

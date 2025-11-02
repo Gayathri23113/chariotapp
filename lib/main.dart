@@ -128,9 +128,9 @@
 
 
 import 'package:myapp/home_screen.dart';
-import 'package:myapp/login_screen.dart';
-import 'package:myapp/signup_screen.dart';
-import 'package:myapp/wrapper_screen.dart';
+import 'package:myapp/authpages/login_screen.dart';
+import 'package:myapp/authpages/signup_screen.dart';
+import 'package:myapp/authpages/wrapper_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
